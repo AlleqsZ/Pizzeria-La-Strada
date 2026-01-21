@@ -41,7 +41,7 @@ Sistem intern de gestionare livrări pentru pizzeria **La Strada**, optimizat pe
 ## 🧱 Arhitectură
 
 - Backend central (API)
-- Desktop App (Dispecerat + Bucătărie)
+- Desktop App (Dispecerat Locatii)
 - Mobile App (Driver – Android & iOS)
 - Scalabil pentru mai multe locații și orașe
 
