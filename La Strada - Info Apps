@@ -1,0 +1,239 @@
+# 🍕 La Strada Delivery System – Full Specification
+
+## 1. OVERVIEW
+Sistem unificat de gestionare livrări pentru pizzeria La Strada, cu:
+- aplicație Desktop (dispecerat + bucătărie)
+- aplicație Mobile (Android & iOS) pentru șoferi
+- suport multi-locație (2 HUB-uri)
+- rutare inteligentă
+- comenzi programate cu fereastră flexibilă
+- control strict anti-abuz
+
+---
+
+## 2. APLICAȚII
+
+### 2.1 Desktop App (Windows / Mac)
+Rol:
+- preluare comenzi
+- alocare HUB
+- alocare șofer
+- control plăți
+- monitorizare status comenzi
+- rapoarte
+
+### 2.2 Mobile App (Android / iOS – Driver)
+Rol:
+- livrare comenzi
+- navigație către adrese
+- gestionare ordine livrare
+- apel client
+- confirmări livrare
+- raport km & timp
+
+---
+
+## 3. STRUCTURĂ MULTI-LOCAȚIE (HUB)
+
+- HUB = locație fizică pizzerie
+- Sistem unic, HUB-uri multiple
+
+### Reguli:
+- Comanda este asignată unui singur HUB
+- HUB-ul este ales:
+  - automat (geolocație adresă)
+  - sau manual (desktop)
+- HUB-ul se blochează după confirmare
+- Doar Admin poate schimba HUB ulterior (log obligatoriu)
+
+---
+
+## 4. FLUX COMANDĂ
+
+### 4.1 Preluare Comandă (Desktop)
+Câmpuri obligatorii:
+- Nume client
+- Telefon
+- Adresă
+- Nr. casă / Bloc
+- Etaj
+- Apartament
+- Observații
+- Tip comandă: Normală / Programată
+
+### 4.2 Bonare
+- Suma totală
+- Tip plată:
+  - Cash (verde 💵)
+  - Card (albastru 💳)
+  - VIR / Online (mov 🏦)
+- POS alert pentru Card
+
+---
+
+## 5. PLĂȚI – LOGICĂ FLEXIBILĂ
+
+- Tipul de plată poate fi schimbat:
+  - Card → Cash
+  - Online → Cash
+- Doar cu confirmare:
+  - șofer
+  - sau dispecer
+- Log obligatoriu:
+  - cine
+  - când
+  - de ce
+
+---
+
+## 6. ALOCARE ȘOFERI
+
+- Șoferii sunt legați de un HUB
+- În caz de nevoie:
+  - șofer din alt HUB poate ajuta
+  - cu aprobare dispecer
+- Sistemul marchează:
+  - HUB origine
+  - HUB livrare
+
+---
+
+## 7. TRANSFER COMANDĂ (ANTI-ABUZ)
+
+### Tipuri:
+- șofer → șofer
+- dispecer → șofer
+
+### Reguli:
+- Transferul necesită aprobare
+- Cash-ul NU se transferă automat
+- Șoferul primitor confirmă suma
+- Log complet anti-fraudă
+
+---
+
+## 8. RUTARE & ORDINE LIVRARE
+
+- Rută optimizată cu puncte multiple
+- Ordinea livrării NU este impusă
+
+### Exemplu:
+- Comenzi: 1, 2, 3
+- Zone: 1 & 3 apropiate
+- Șoferul poate livra: 1 → 3 → 2
+
+---
+
+## 9. COMENZI PROGRAMATE (SMART MODE)
+
+### 9.1 Definiție
+Câmpuri:
+- is_scheduled = true
+- scheduled_date
+- scheduled_time
+- delivery_window_before (ex: -20 min)
+- delivery_window_after (ex: +10 min)
+
+### Exemplu:
+- Ora: 15:30
+- Window: 15:10 – 15:40
+
+---
+
+### 9.2 Reguli Livrare
+- Comanda poate fi livrată:
+  - DOAR în window
+- Livrare mai devreme permisă
+- Livrare prea devreme = blocată
+- Livrare târzie = permisă + flag
+
+---
+
+### 9.3 Alerte Comenzi Programate
+
+#### Desktop:
+- Alertă zilnică la prima deschidere
+- Banner fix pe ziua curentă
+- Highlight cu 60 / 30 / 15 min înainte
+
+#### Driver:
+- Notificare când intră în window
+- Buton rapid:
+  - „⚡ Livrează acum”
+
+---
+
+## 10. UI / UX INDICATORI
+
+### Culori:
+- Cash → Verde 💵
+- Card → Albastru 💳
+- VIR → Mov 🏦
+- Programată → Mov cu icon 🕒
+
+### Stări:
+- Livrabil acum
+- Prea devreme
+- Întârziat
+
+---
+
+## 11. APEL CLIENT (DRIVER)
+
+- Buton „📞 Apelează”
+- Apel direct din aplicație
+- Fără copiere număr
+- Ideal pentru case
+
+---
+
+## 12. RAPORTARE
+
+### Zilnic:
+- Nr. comenzi
+- Cash / Card / Online
+- Km parcurși / șofer
+- Timp livrare
+
+### Programate:
+- Livrate în window
+- Livrate devreme
+- Întârzieri
+
+---
+
+## 13. KPI
+
+- Km / comandă
+- Timp mediu livrare
+- Respectare window (%)
+- Cash gestionat / șofer
+
+---
+
+## 14. SECURITATE & LOGS
+
+Totul este logat:
+- schimbare HUB
+- transfer comandă
+- schimbare plată
+- livrare devreme / târziu
+
+---
+
+## 15. SCALABILITATE
+
+- + HUB-uri
+- + șoferi
+- + orașe
+- + integrare online ordering
+
+---
+
+## 16. CONCLUZIE
+
+✔ Sistem rapid  
+✔ Control total  
+✔ Fără abuzuri  
+✔ Ușor de folosit  
+✔ Pregătit pentru scalare  
