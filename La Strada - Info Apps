@@ -4,12 +4,14 @@
 Sistem unificat de gestionare livrări pentru pizzeria La Strada, cu:
 - aplicație Desktop (dispecerat + bucătărie)
 - aplicație Mobile (Android & iOS) pentru șoferi
-- suport multi-locație (2 HUB-uri)
+- suport multi-locație (HUB-uri multiple: 1,2,3,4…)
 - zonare livrare
 - geolocație automată client (din adresă)
 - rutare inteligentă
 - comenzi programate cu fereastră flexibilă
 - control strict anti-abuz
+- pontaj șoferi cu audit complet (km + poze)
+- ierarhie clară de roluri (Driver / Dispecer / Admin / CEO)
 
 ---
 
@@ -24,15 +26,19 @@ Rol:
 - alocare șofer
 - control plăți
 - monitorizare status comenzi
-- rapoarte
+- rapoarte operaționale & financiare
+- vizualizare pontaj șoferi
+- modificare HUB activ șofer (cu log)
 
 ### 2.2 Mobile App (Android / iOS – Driver)
 Rol:
+- selectare HUB la început de tură
 - livrare comenzi
 - navigație către locația clientului
 - gestionare ordine livrare
 - apel client
 - confirmări livrare
+- pontaj intrare / ieșire tură
 - raport km & timp
 
 ---
@@ -41,9 +47,38 @@ Rol:
 
 ### 3.1 HUB
 - HUB = locație fizică pizzerie
-- Sistem unic, HUB-uri multiple
+- Număr HUB-uri: nelimitat (ex: HUB 1, HUB 2, HUB 3, HUB 4)
+- Fiecare HUB are:
+  - adresă
+  - zonă/zonae arondate
+  - șoferi activi
+  - încasări proprii
 
-### 3.2 ZONE DE LIVRARE
+---
+
+### 3.2 SELECTARE HUB ȘOFER (START TURĂ)
+
+#### Proces:
+1. La început de tură, șoferul este obligat să:
+   - selecteze HUB-ul activ (1 / 2 / 3 / 4)
+2. HUB-ul selectat devine:
+   - locația de lucru a șoferului în ziua respectivă
+   - HUB-ul implicit pentru comenzile primite
+
+#### Reguli:
+- HUB-ul este obligatoriu
+- HUB-ul se poate schimba doar de:
+  - Dispecer
+  - Admin
+  - CEO
+- Orice schimbare HUB este:
+  - logată
+  - timestamped
+  - asociată cu utilizatorul care a făcut modificarea
+
+---
+
+### 3.3 ZONE DE LIVRARE
 Exemple:
 - Micălaca
 - Aradul Nou
@@ -56,7 +91,7 @@ Exemple:
 - Zona este selectată la preluarea comenzii
 - Zona determină HUB-ul recomandat
 - Operatorul poate muta comanda:
-  - HUB 1 ↔ HUB 2
+  - HUB 1 ↔ HUB 2 ↔ HUB 3 ↔ HUB 4
 - HUB-ul se blochează după confirmare
 - Schimbarea HUB-ului este logată
 
@@ -82,33 +117,25 @@ Câmpuri obligatorii:
 ### 4.2 GEOLOCAȚIE CLIENT (AUTOMATĂ)
 
 #### Proces:
-1. Operatorul introduce adresa:
-   - zonă
-   - stradă
-   - număr / bloc
-   - scară
+1. Operatorul introduce adresa completă
 2. Sistemul execută **geocodare automată**
 3. Se determină:
    - coordonate GPS exacte
-   - poziție intrare bloc (când este disponibil)
-4. Se afișează pin pe hartă pentru validare
+   - intrare bloc (când este disponibil)
+4. Pin de validare pe hartă
 
 #### Reguli:
 - Geolocația este asociată comenzii
-- Poate fi ajustată manual doar de operator
-- Coordonatele sunt salvate permanent pe comandă
+- Ajustabilă doar de operator
+- Coordonatele rămân salvate permanent
 
 ---
 
 ### 4.3 RUTĂ AUTOMATĂ CĂTRE CLIENT
-
-- Pe baza coordonatelor clientului:
-  - sistemul calculează automat ruta
-- Ruta este disponibilă:
-  - în desktop (preview)
-  - în aplicația șoferului (navigație)
-- Ruta este recalculată dacă:
-  - comanda este mutată între HUB-uri
+- Rută calculată automat din coordonate
+- Preview în desktop
+- Navigație în aplicația șoferului
+- Recalcul la schimbare HUB
 
 ---
 
@@ -118,20 +145,20 @@ Câmpuri obligatorii:
   - Cash (verde 💵)
   - Card (albastru 💳)
   - Online / Virament (mov 🏦)
-- POS alert pentru Card
+- Alertă POS pentru Card
 
 ---
 
 ## 5. PLĂȚI – REGULI FINALE
 
-### Tipuri plată:
+### Tipuri:
 - Cash
 - Card
 - Online (Virament)
 
-### Reguli schimbare:
-- Online (Virament):
-  - ❌ NU poate fi schimbat
+### Reguli:
+- Online:
+  - ❌ nu se modifică
 - Card ↔ Cash:
   - ✔ permis
   - ✔ necesită confirmare
@@ -140,13 +167,9 @@ Câmpuri obligatorii:
 ---
 
 ## 6. ALOCARE ȘOFERI
-
-- Șoferii sunt legați de un HUB
-- Pot prelua comenzi din alt HUB:
-  - doar cu aprobare dispecer
-- Sistemul reține:
-  - HUB origine
-  - HUB livrare
+- Șoferii sunt legați de un HUB activ (din start tură)
+- Pot primi comenzi din alt HUB doar cu aprobare
+- Se salvează HUB origine + HUB livrare
 
 ---
 
@@ -157,18 +180,17 @@ Câmpuri obligatorii:
 - dispecer → șofer
 
 ### Reguli:
-- Transferul necesită aprobare
-- Cash-ul NU se transferă automat
-- Șoferul primitor confirmă suma
-- Log complet anti-fraudă
+- Aprobare obligatorie
+- Cash NU se transferă automat
+- Confirmare sumă de către șoferul primitor
+- Log complet
 
 ---
 
 ## 8. RUTARE & ORDINE LIVRARE
-
-- Rută optimizată cu puncte multiple
-- Ordinea livrării NU este impusă
-- Șoferul poate livra în orice ordine eficientă
+- Rută cu puncte multiple
+- Ordine flexibilă
+- Optimizare km / timp
 
 ---
 
@@ -181,16 +203,13 @@ Câmpuri obligatorii:
 - delivery_window_after
 
 ### Reguli:
-- Livrare permisă doar în window
-- Livrare devreme permisă
-- Livrare prea devreme = blocată
-- Livrare târzie = permisă + flag
+- Buffer livrare devreme configurabil (10–20 min)
+- Prea devreme = blocat
+- Târziu = permis + flag
 
 ---
 
 ## 10. UI / UX INDICATORI
-
-### Culori:
 - Cash → Verde 💵
 - Card → Albastru 💳
 - Online → Mov 🏦
@@ -198,59 +217,91 @@ Câmpuri obligatorii:
 
 ---
 
-## 11. APEL CLIENT (DRIVER)
-
-- Buton „📞 Apelează”
-- Apel direct din aplicație
-- Fără copiere număr
+## 11. APEL CLIENT
+- Buton 📞 direct din aplicație
 
 ---
 
 ## 12. RAPORTARE
-
 - Comenzi livrate
-- Cash / Card / Online
-- Km parcurși / șofer
-- Timp livrare
-- Performanță comenzi programate
+- Încasări pe tip plată
+- Km / șofer
+- Ore / șofer
+- Performanță HUB
 
 ---
 
 ## 13. KPI
-
 - Km / comandă
 - Timp mediu livrare
-- Respectare window (%)
-- Cash gestionat / șofer
+- Respectare window
+- Încasări / șofer / HUB
 
 ---
 
 ## 14. SECURITATE & LOGS
-
-Se loghează:
-- schimbare HUB
+Log permanent pentru:
+- schimbare HUB (șofer sau comandă)
 - schimbare zonă
 - ajustare geolocație
 - transfer comandă
 - schimbare plată
 - livrare devreme / târziu
+- corecții km / tură
 
 ---
 
-## 15. SCALABILITATE
+## 15. PONTAJ ȘOFERI (TIME & MILEAGE)
 
-- HUB-uri multiple
-- Zone multiple
-- Integrare comenzi online
-- Extindere orașe
+### Start tură (obligatoriu)
+- Selectare HUB
+- Km bord (numeric)
+- Poză bord
+- Oră automată
+
+### End tură (obligatoriu)
+- Km final
+- Poză bord
+- Oră automată
+
+### Calcul:
+- Total km
+- Total ore
 
 ---
 
-## 16. CONCLUZIE
+## 16. ROLURI & ACCES
 
-✔ Geolocație precisă din adresă  
-✔ Rutare automată către bloc  
-✔ Control financiar total  
-✔ Zonare clară  
-✔ Ușor de folosit  
-✔ Pregătit pentru scalare  
+### Driver
+- Date proprii
+- Km proprii
+- Ture proprii
+
+### Dispecer
+- Șoferi HUB
+- Comenzi HUB
+- Pontaj HUB
+
+### Admin (DEVELOPER)
+- Acces tehnic complet
+- Config HUB-uri
+- Corecții date
+- Debug / audit
+- Nu are restricții funcționale
+
+### CEO
+- Acces absolut:
+  - toate HUB-urile
+  - toți șoferii
+  - km, ore, poze
+  - încasări / zi / HUB / șofer
+  - istoric complet
+
+---
+
+## 17. CONCLUZIE FINALĂ
+✔ Control total multi-HUB  
+✔ Pontaj auditabil (km + foto)  
+✔ Flux anti-abuz  
+✔ Flexibil pentru operațional  
+✔ Gândit pentru scalare serioasă  
