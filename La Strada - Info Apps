@@ -2,7 +2,7 @@
 
 ## 1. OVERVIEW
 Sistem unificat de gestionare livrări pentru pizzeria La Strada, cu:
-- aplicație Desktop (dispecerat + bucătărie)
+- aplicație Desktop (dispecerat)
 - aplicație Mobile (Android & iOS) pentru șoferi
 - suport multi-locație (HUB-uri multiple: 1,2,3,4…)
 - zonare livrare
